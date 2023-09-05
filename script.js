@@ -1,5 +1,3 @@
-'use strict';
-
 import {
    Grid
 } from "./grid.js";
@@ -7,14 +5,13 @@ import {
    Tile
 } from "./tile.js";
 
-const gameBoard = document.querySelector('#game-board');
+const gameBoard = document.getElementById("game-board");
 
 const grid = new Grid(gameBoard);
-
 grid.getRandomEmptyCell().linkTile(new Tile(gameBoard));
 grid.getRandomEmptyCell().linkTile(new Tile(gameBoard));
-
 setupInputOnce();
+
 
 function setupInputOnce() {
    window.addEventListener("keydown", handleInput, {
@@ -29,29 +26,28 @@ async function handleInput(event) {
             setupInputOnce();
             return;
          }
-         moveUp();
+         await moveUp();
          break;
-
       case "ArrowDown":
          if (!canMoveDown()) {
             setupInputOnce();
             return;
          }
-         moveDown();
+         await moveDown();
          break;
       case "ArrowLeft":
          if (!canMoveLeft()) {
             setupInputOnce();
             return;
          }
-         moveLeft();
+         await moveLeft();
          break;
       case "ArrowRight":
          if (!canMoveRight()) {
             setupInputOnce();
             return;
          }
-         moveRight();
+         await moveRight();
          break;
       default:
          setupInputOnce();
@@ -62,8 +58,8 @@ async function handleInput(event) {
    grid.getRandomEmptyCell().linkTile(newTile);
 
    if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
-      await newTile.waitForAnimationEnd();
-      alert("Try again!!!");
+      await newTile.waitForAnimationEnd()
+      alert("Try again!")
       return;
    }
 
@@ -71,11 +67,11 @@ async function handleInput(event) {
 }
 
 async function moveUp() {
-   await slideTiles(grid.cellsGroupedByColomn)
+   await slideTiles(grid.cellsGroupedByColumn);
 }
 
 async function moveDown() {
-   await slideTiles(grid.cellsGroupedByReversedColomn)
+   await slideTiles(grid.cellsGroupedByReversedColumn);
 }
 
 async function moveLeft() {
@@ -89,20 +85,20 @@ async function moveRight() {
 async function slideTiles(groupedCells) {
    const promises = [];
 
-   groupedCells.forEach(group => sliderTilesInGroup(group, promises));
+   groupedCells.forEach(group => slideTilesInGroup(group, promises));
 
    await Promise.all(promises);
-
    grid.cells.forEach(cell => {
-      cell.hasTileForMerge() && cell.mergeTiles();
+      cell.hasTileForMerge() && cell.mergeTiles()
    });
 }
 
-function sliderTilesInGroup(group, promises) {
+function slideTilesInGroup(group, promises) {
    for (let i = 1; i < group.length; i++) {
       if (group[i].isEmpty()) {
          continue;
       }
+
       const cellWithTile = group[i];
 
       let targetCell;
@@ -116,7 +112,7 @@ function sliderTilesInGroup(group, promises) {
          continue;
       }
 
-      promises.push(cellWithTile.linkedTile.waitForTransitionEnd())
+      promises.push(cellWithTile.linkedTile.waitForTransitionEnd());
 
       if (targetCell.isEmpty()) {
          targetCell.linkTile(cellWithTile.linkedTile);
@@ -129,11 +125,11 @@ function sliderTilesInGroup(group, promises) {
 }
 
 function canMoveUp() {
-   return canMove(grid.cellsGroupedByColomn);
+   return canMove(grid.cellsGroupedByColumn);
 }
 
 function canMoveDown() {
-   return canMove(grid.cellsGroupedByReversedColomn);
+   return canMove(grid.cellsGroupedByReversedColumn);
 }
 
 function canMoveLeft() {
@@ -153,11 +149,12 @@ function canMoveInGroup(group) {
       if (index === 0) {
          return false;
       }
+
       if (cell.isEmpty()) {
          return false;
       }
 
       const targetCell = group[index - 1];
       return targetCell.canAccept(cell.linkedTile);
-   })
+   });
 }

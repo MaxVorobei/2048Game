@@ -1,5 +1,5 @@
 export class Cell {
-   constructor (gridElement, x, y) {
+   constructor(gridElement, x, y) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
       gridElement.append(cell);
@@ -34,7 +34,10 @@ export class Cell {
    }
 
    canAccept(newTile) {
-      return this.isEmpty() || (!this.hasTileForMerge() && this.linkedTile.value === newTile.value)
+      return (
+         this.isEmpty() ||
+         (!this.hasTileForMerge() && this.linkedTile.value === newTile.value)
+      );
    }
 
    mergeTiles() {
